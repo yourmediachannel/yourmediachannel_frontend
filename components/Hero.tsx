@@ -34,7 +34,12 @@ const HeroSection = () => {
         className="mx-auto absolute bottom-[10%] -rotate-12 right-0 translate-x-[80%] -z-10 size-[100px] sm:size-[200px] md:size-[400px]"
       />
       {/* 📞 CTA Button */}
-      <Button label="Schedule a Free Call" />
+      <Button 
+        label="Schedule a Free Call" 
+        data-cal-namespace="30min"
+        data-cal-link="yourakshaw/30min"
+        data-cal-config='{"layout": "month_view"}'
+      />
     </section>
   );
 };

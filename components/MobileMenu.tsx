@@ -45,6 +45,9 @@ const MobileMenu = () => {
                   href={item.href}
                   label={item.label}
                   onClick={() => setIsOpen(false)}
+                  data-cal-namespace="30min"
+                  data-cal-link="yourakshaw/30min"
+                  data-cal-config='{"layout": "month_view"}'
                 />
             }
           </div>
