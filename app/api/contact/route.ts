@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { contactFormSchema } from '@/lib/validation'
 import { saveContact } from '@/lib/database'
-import { generateId } from '@/lib/utils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,24 +9,19 @@ export async function POST(request: NextRequest) {
     // Validate the request body
     const validatedData = contactFormSchema.parse(body)
     
-    // Generate unique ID
-    const id = generateId()
-    
-    // Create contact entry
-    const contactEntry = {
-      id,
+    // Create contact entry with user agent
+    const contactData = {
       ...validatedData,
-      createdAt: new Date().toISOString(),
       userAgent: request.headers.get('user-agent') || undefined,
+      isAttended: false, // New contacts are always marked as not attended
     }
     
     // Save to database
-    await saveContact(contactEntry)
+    await saveContact(contactData)
     
     return NextResponse.json({
       success: true,
-      message: 'Contact form submitted successfully',
-      data: contactEntry
+      message: 'Contact form submitted successfully'
     })
     
   } catch (error) {

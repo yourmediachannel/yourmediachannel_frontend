@@ -38,7 +38,9 @@ import {
   ChevronsRight,
   Copy,
   Globe,
-  X
+  X,
+  CheckCircle,
+  Circle
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -52,6 +54,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
 
 const columnHelper = createColumnHelper<ContactEntry>()
@@ -70,6 +73,7 @@ export default function AdminDashboard() {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'attended' | 'pending'>('all')
   
   // Modal state
   const [selectedContact, setSelectedContact] = useState<ContactEntry | null>(null)
@@ -130,6 +134,21 @@ export default function AdminDashboard() {
         return new Date(rowA.getValue('createdAt')).getTime() - new Date(rowB.getValue('createdAt')).getTime()
       }
     }),
+    columnHelper.accessor('isAttended', {
+      header: 'Attended',
+      cell: (info) => (
+        <div className="flex items-center space-x-2">
+          <Switch
+            checked={info.getValue()}
+            onCheckedChange={(checked) => handleToggleAttended(info.row.original.id, checked)}
+            className="data-[state=checked]:bg-primary"
+          />
+          <span className="text-xs text-muted-foreground hidden sm:inline">
+            {info.getValue() ? 'Attended' : 'Pending'}
+          </span>
+        </div>
+      ),
+    }),
     columnHelper.display({
       id: 'actions',
       header: 'Actions',
@@ -157,8 +176,16 @@ export default function AdminDashboard() {
     }),
   ], [isDeleting])
 
+  // Filter contacts based on status
+  const filteredContacts = useMemo(() => {
+    if (statusFilter === 'all') return contacts
+    return contacts.filter(contact => 
+      statusFilter === 'attended' ? contact.isAttended : !contact.isAttended
+    )
+  }, [contacts, statusFilter])
+
   const table = useReactTable({
-    data: contacts,
+    data: filteredContacts,
     columns,
     state: {
       sorting,
@@ -288,6 +315,43 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleToggleAttended = async (id: string, isAttended: boolean) => {
+    const token = localStorage.getItem('adminToken')
+
+    try {
+      const response = await fetch(`/api/admin/contacts/${id}/attended`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isAttended }),
+      })
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('adminToken')
+          router.push('/admin/login')
+          return
+        }
+        throw new Error('Failed to update attended status')
+      }
+
+      setContacts(prev => 
+        prev.map(contact => 
+          contact.id === id 
+            ? { ...contact, isAttended } 
+            : contact
+        )
+      )
+      
+      toast.success(`Contact marked as ${isAttended ? 'attended' : 'pending'}`)
+    } catch (err) {
+      console.error('Toggle attended error:', err)
+      toast.error('Failed to update attended status')
+    }
+  }
+
   const handleDeleteFromModal = async () => {
     if (!selectedContact) return
     
@@ -387,6 +451,8 @@ export default function AdminDashboard() {
       const contactDate = new Date(contact.createdAt)
       return contactDate >= weekAgo
     }).length,
+    attendedContacts: contacts.filter(contact => contact.isAttended).length,
+    pendingContacts: contacts.filter(contact => !contact.isAttended).length,
   }
 
   if (isLoading) {
@@ -665,6 +731,42 @@ export default function AdminDashboard() {
                     </CardContent>
                   </Card>
                 </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="sm:col-span-2 lg:col-span-1"
+                >
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Attended</CardTitle>
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-green-600">{stats.attendedContacts}</div>
+                      <p className="text-xs text-muted-foreground">Completed responses</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="sm:col-span-2 lg:col-span-1"
+                >
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Pending</CardTitle>
+                      <Circle className="h-4 w-4 text-orange-500" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-orange-600">{stats.pendingContacts}</div>
+                      <p className="text-xs text-muted-foreground">Awaiting response</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               </div>
 
               {/* Welcome Message */}
@@ -792,12 +894,24 @@ export default function AdminDashboard() {
                   <Card>
                     <CardHeader>
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <Input
-                          placeholder="Search all columns..."
-                          value={globalFilter}
-                          onChange={(e) => setGlobalFilter(e.target.value)}
-                          className="max-w-sm"
-                        />
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                          <Input
+                            placeholder="Search all columns..."
+                            value={globalFilter}
+                            onChange={(e) => setGlobalFilter(e.target.value)}
+                            className="max-w-sm"
+                          />
+                          <Select value={statusFilter} onValueChange={(value: 'all' | 'attended' | 'pending') => setStatusFilter(value)}>
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue placeholder="Filter by status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Contacts</SelectItem>
+                              <SelectItem value="attended">Attended</SelectItem>
+                              <SelectItem value="pending">Pending</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                         <div className="text-sm text-muted-foreground whitespace-nowrap">
                           Showing {table.getFilteredRowModel().rows.length} of {contacts.length} entries
                         </div>
@@ -851,6 +965,7 @@ export default function AdminDashboard() {
                                   <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    className={row.original.isAttended ? 'bg-green-50/50 dark:bg-green-950/20' : ''}
                                   >
                                     {row.getVisibleCells().map((cell) => (
                                       <TableCell key={cell.id} className="whitespace-nowrap">
@@ -969,10 +1084,26 @@ export default function AdminDashboard() {
               {/* Personal Information */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
-                    <User className="h-5 w-5 text-primary" />
-                    <span>Personal Information</span>
-                  </CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+                      <User className="h-5 w-5 text-primary" />
+                      <span>Personal Information</span>
+                    </CardTitle>
+                                      <div className="flex items-center space-x-2">
+                    <Label htmlFor="attended-toggle" className="text-sm font-medium">
+                      Attended
+                    </Label>
+                    <Switch
+                      id="attended-toggle"
+                      checked={selectedContact.isAttended}
+                      onCheckedChange={(checked) => handleToggleAttended(selectedContact.id, checked)}
+                      className="data-[state=checked]:bg-primary"
+                    />
+                    <Badge variant={selectedContact.isAttended ? "default" : "secondary"}>
+                      {selectedContact.isAttended ? 'Attended' : 'Pending'}
+                    </Badge>
+                  </div>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

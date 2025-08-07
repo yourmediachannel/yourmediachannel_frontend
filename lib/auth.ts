@@ -26,9 +26,9 @@ export function verifyToken(token: string): boolean {
 
 export async function createSession(): Promise<string> {
   const token = generateToken()
-  const expiresAt = Date.now() + 24 * 60 * 60 * 1000 // 24 hours
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
   
-  await saveSession({ token, expiresAt })
+  await saveSession({ token, username: ADMIN_USERNAME, expiresAt })
   return token
 }
 
@@ -36,7 +36,7 @@ export async function validateSession(token: string): Promise<boolean> {
   if (!verifyToken(token)) return false
   
   const sessions = await getSessions()
-  const session = sessions.find(s => s.token === token && s.expiresAt > Date.now())
+  const session = sessions.find(s => s.token === token && new Date(s.expiresAt) > new Date())
   
   return !!session
 }

@@ -8,7 +8,7 @@ A modern landing page with a fully functional contact form backend and password-
 - **Admin Dashboard**: Password-protected dashboard to view and manage contact submissions
 - **Modern UI**: Built with Next.js, TypeScript, Tailwind CSS, and Framer Motion
 - **Secure Authentication**: JWT-based authentication for admin access
-- **Data Persistence**: JSON file-based database for contact entries
+- **Data Persistence**: MongoDB database with Mongoose ODM
 - **Responsive Design**: Mobile-first, accessible design
 
 ## Tech Stack
@@ -18,7 +18,7 @@ A modern landing page with a fully functional contact form backend and password-
 - **Backend**: Next.js API Routes
 - **Authentication**: JWT, bcryptjs
 - **Validation**: Zod
-- **Database**: JSON file storage (simple, no external dependencies)
+- **Database**: MongoDB with Mongoose ODM
 
 ## Getting Started
 
@@ -26,6 +26,7 @@ A modern landing page with a fully functional contact form backend and password-
 
 - Node.js 18+ 
 - npm or yarn
+- MongoDB (local or cloud)
 
 ### Installation
 
@@ -40,12 +41,25 @@ cd yourmediachannel_frontend
 npm install
 ```
 
-3. Set up environment variables (optional):
+3. Set up MongoDB:
+   - **Local MongoDB**: Install and start MongoDB locally
+   - **MongoDB Atlas**: Create a free cluster at [MongoDB Atlas](https://www.mongodb.com/atlas)
+
+4. Set up environment variables:
 Create a `.env.local` file in the root directory:
 ```env
-JWT_SECRET=your-super-secret-jwt-key-change-this
+# MongoDB Configuration
+MONGODB_URI=mongodb://localhost:27017/yourmediachannel
+
+# For MongoDB Atlas (cloud hosted), use:
+# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/yourmediachannel?retryWrites=true&w=majority
+
+# Admin credentials (change these in production)
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD_HASH=$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+
+# JWT Secret (change this in production)
+JWT_SECRET=your-super-secret-jwt-key-change-this
 ```
 
 **Note**: The default password is "password". To generate a new password hash:
@@ -53,12 +67,12 @@ ADMIN_PASSWORD_HASH=$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
 node -e "console.log(require('bcryptjs').hashSync('your-new-password', 10))"
 ```
 
-4. Run the development server:
+5. Run the development server:
 ```bash
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Usage
 
@@ -160,9 +174,12 @@ yourmediachannel_frontend/
 ├── lib/                          # Utility libraries
 │   ├── auth.ts                   # Authentication utilities
 │   ├── database.ts               # Database operations
+│   ├── mongodb.ts                # MongoDB connection
 │   └── validation.ts             # Zod validation schemas
+├── models/                       # Mongoose models
+│   ├── Contact.ts                # Contact model
+│   └── AdminSession.ts           # Admin session model
 ├── types/                        # TypeScript type definitions
-├── data/                         # JSON database files (auto-created)
 └── middleware.ts                 # Route protection middleware
 ```
 
@@ -178,10 +195,11 @@ ADMIN_PASSWORD_HASH=your-bcrypt-hash
 
 ### Database Considerations
 For production, consider:
-- Using a proper database (PostgreSQL, MongoDB, etc.)
+- Using MongoDB Atlas for managed database hosting
 - Implementing data backup strategies
 - Adding rate limiting
 - Setting up monitoring and logging
+- Setting up database indexes for better performance
 
 ### Security Recommendations
 - Change default admin credentials
@@ -223,12 +241,12 @@ For production, consider:
    - Verify API endpoints
    - Check network requests
 
-### Data Directory
-The application creates a `data/` directory in the project root to store:
-- `contacts.json` - Contact form submissions
-- `sessions.json` - Admin session tokens
+### Database Collections
+The application uses MongoDB collections:
+- `contacts` - Contact form submissions
+- `adminsessions` - Admin session tokens
 
-Make sure the application has write permissions to this directory.
+The database connection is managed through Mongoose with automatic connection pooling and caching.
 
 ## License
 

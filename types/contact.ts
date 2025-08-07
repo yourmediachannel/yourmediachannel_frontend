@@ -13,6 +13,7 @@ export interface ContactEntry {
   message: string
   createdAt: string
   userAgent?: string
+  isAttended: boolean
 }
 
 export interface AdminCredentials {
