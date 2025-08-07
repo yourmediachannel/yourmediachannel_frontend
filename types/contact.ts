@@ -5,10 +5,13 @@ export interface ContactFormData {
   message: string
 }
 
-export interface ContactEntry extends ContactFormData {
+export interface ContactEntry {
   id: string
+  name: string
+  email: string
+  subject: string
+  message: string
   createdAt: string
-  ipAddress?: string
   userAgent?: string
 }
 
@@ -19,11 +22,14 @@ export interface AdminCredentials {
 
 export interface AdminSession {
   token: string
-  expiresAt: number
+  username: string
+  createdAt: string
+  expiresAt: string
 }
 
 export interface ApiResponse<T = any> {
   success: boolean
-  data?: T
+  message?: string
   error?: string
+  data?: T
 }

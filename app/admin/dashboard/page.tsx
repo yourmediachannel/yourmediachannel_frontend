@@ -4,13 +4,24 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ContactEntry } from '@/types/contact'
-import { Trash2, LogOut, Mail, User, Calendar, Globe, Monitor } from 'lucide-react'
+import { 
+  Trash2, 
+  LogOut, 
+  Mail, 
+  User, 
+  Calendar, 
+  Monitor,
+  TrendingUp,
+  Clock,
+  RefreshCw
+} from 'lucide-react'
 
 export default function AdminDashboard() {
   const [contacts, setContacts] = useState<ContactEntry[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -50,6 +61,15 @@ export default function AdminDashboard() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    const token = localStorage.getItem('adminToken')
+    if (token) {
+      await fetchContacts(token)
+    }
+    setIsRefreshing(false)
   }
 
   const handleDelete = async (id: string) => {
@@ -114,47 +134,123 @@ export default function AdminDashboard() {
     })
   }
 
+  // Calculate statistics
+  const stats = {
+    totalContacts: contacts.length,
+    todayContacts: contacts.filter(contact => {
+      const today = new Date()
+      const contactDate = new Date(contact.createdAt)
+      return contactDate.toDateString() === today.toDateString()
+    }).length,
+    thisWeekContacts: contacts.filter(contact => {
+      const now = new Date()
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      const contactDate = new Date(contact.createdAt)
+      return contactDate >= weekAgo
+    }).length,
+  }
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-black to-neutral-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-[#017aff] text-xl">Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-black to-neutral-900">
+    <div className="min-h-screen bg-black">
       {/* Header */}
-      <header className="bg-zinc-900/50 backdrop-blur-sm border-b border-white/10 p-4">
+      <header className="bg-black border-b border-[#017aff]/20 p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Mail className="text-primary h-8 w-8" />
+            <Mail className="text-[#017aff] h-8 w-8" />
             <div>
               <h1 className="text-2xl font-bold text-white">Contact Dashboard</h1>
-              <p className="text-zinc-400 text-sm">{contacts.length} total entries</p>
+              <p className="text-gray-400 text-sm">Manage contact form submissions</p>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            <LogOut className="h-4 w-4" />
-            <span>Logout</span>
-          </button>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="flex items-center space-x-2 bg-[#017aff] hover:bg-[#017aff]/80 disabled:opacity-50 disabled:cursor-not-allowed text-white px-3 py-2 rounded-lg transition-colors"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span>Refresh</span>
+            </button>
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto p-4">
+      <main className="max-w-7xl mx-auto p-4 space-y-6">
         {error && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg"
+            className="p-4 bg-red-500/20 border border-red-500/30 rounded-lg"
           >
             <p className="text-red-400">{error}</p>
           </motion.div>
         )}
+
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[#017aff] p-6 rounded-2xl text-white shadow-lg"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-100 text-sm font-medium">Total Contacts</p>
+                <p className="text-3xl font-bold">{stats.totalContacts}</p>
+                <p className="text-blue-200 text-sm">All time submissions</p>
+              </div>
+              <Mail className="h-12 w-12 text-blue-200" />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-[#017aff] p-6 rounded-2xl text-white shadow-lg"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-100 text-sm font-medium">Today's Contacts</p>
+                <p className="text-3xl font-bold">{stats.todayContacts}</p>
+                <p className="text-blue-200 text-sm">Submissions today</p>
+              </div>
+              <TrendingUp className="h-12 w-12 text-blue-200" />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-[#017aff] p-6 rounded-2xl text-white shadow-lg"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-100 text-sm font-medium">This Week</p>
+                <p className="text-3xl font-bold">{stats.thisWeekContacts}</p>
+                <p className="text-blue-200 text-sm">Last 7 days</p>
+              </div>
+              <Clock className="h-12 w-12 text-blue-200" />
+            </div>
+          </motion.div>
+        </div>
 
         {contacts.length === 0 ? (
           <motion.div
@@ -162,9 +258,9 @@ export default function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center py-12"
           >
-            <Mail className="text-zinc-600 h-16 w-16 mx-auto mb-4" />
+            <Mail className="text-gray-600 h-16 w-16 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-white mb-2">No contact entries yet</h2>
-            <p className="text-zinc-400">Contact form submissions will appear here</p>
+            <p className="text-gray-400">Contact form submissions will appear here</p>
           </motion.div>
         ) : (
           <div className="grid gap-6">
@@ -174,21 +270,21 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-zinc-900/50 backdrop-blur-sm border border-white/10 rounded-xl p-6"
+                className="bg-gray-900 border border-[#017aff]/20 rounded-xl p-6"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <User className="text-primary h-5 w-5" />
+                      <User className="text-[#017aff] h-5 w-5" />
                       <h3 className="text-lg font-semibold text-white">{contact.name}</h3>
                     </div>
                     <div className="flex items-center space-x-3 mb-2">
-                      <Mail className="text-zinc-400 h-4 w-4" />
-                      <span className="text-zinc-300">{contact.email}</span>
+                      <Mail className="text-gray-400 h-4 w-4" />
+                      <span className="text-gray-300">{contact.email}</span>
                     </div>
                     <div className="flex items-center space-x-3 mb-2">
-                      <Calendar className="text-zinc-400 h-4 w-4" />
-                      <span className="text-zinc-300 text-sm">{formatDate(contact.createdAt)}</span>
+                      <Calendar className="text-gray-400 h-4 w-4" />
+                      <span className="text-gray-300 text-sm">{formatDate(contact.createdAt)}</span>
                     </div>
                   </div>
                   <button
@@ -202,29 +298,21 @@ export default function AdminDashboard() {
 
                 <div className="space-y-3">
                   <div>
-                    <h4 className="text-sm font-medium text-zinc-400 mb-1">Subject</h4>
+                    <h4 className="text-sm font-medium text-gray-400 mb-1">Subject</h4>
                     <p className="text-white">{contact.subject}</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-zinc-400 mb-1">Message</h4>
+                    <h4 className="text-sm font-medium text-gray-400 mb-1">Message</h4>
                     <p className="text-white whitespace-pre-wrap">{contact.message}</p>
                   </div>
                   
-                  {(contact.ipAddress || contact.userAgent) && (
-                    <div className="pt-3 border-t border-white/10">
-                      <div className="flex items-center space-x-3 text-xs text-zinc-500">
-                        {contact.ipAddress && (
-                          <div className="flex items-center space-x-1">
-                            <Globe className="h-3 w-3" />
-                            <span>{contact.ipAddress}</span>
-                          </div>
-                        )}
-                        {contact.userAgent && (
-                          <div className="flex items-center space-x-1">
-                            <Monitor className="h-3 w-3" />
-                            <span className="truncate max-w-xs">{contact.userAgent}</span>
-                          </div>
-                        )}
+                  {contact.userAgent && (
+                    <div className="pt-3 border-t border-[#017aff]/20">
+                      <div className="flex items-center space-x-3 text-xs text-gray-500">
+                        <div className="flex items-center space-x-1">
+                          <Monitor className="h-3 w-3" />
+                          <span className="truncate max-w-xs">{contact.userAgent}</span>
+                        </div>
                       </div>
                     </div>
                   )}

@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",
+    "@tanstack/react-table": "^8.21.3",
     "bcryptjs": "^2.4.3",
+    "date-fns": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.536.0",
     "motion": "^12.23.12",

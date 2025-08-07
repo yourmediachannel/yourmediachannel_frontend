@@ -44,16 +44,16 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-black to-neutral-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="bg-zinc-900/50 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+        <div className="bg-gray-900 border border-[#017aff]/20 rounded-2xl p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">Admin Login</h1>
-            <p className="text-zinc-400">Access the contact form dashboard</p>
+            <p className="text-gray-400">Access the contact form dashboard</p>
           </div>
 
           {error && (
@@ -68,7 +68,7 @@ export default function AdminLogin() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-zinc-300 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
                 Username
               </label>
               <input
@@ -77,13 +77,13 @@ export default function AdminLogin() {
                 value={credentials.username}
                 onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
                 required
-                className="w-full rounded-lg bg-zinc-800 px-4 py-3 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary border border-zinc-700"
+                className="w-full rounded-lg bg-gray-800 px-4 py-3 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#017aff] border border-gray-700"
                 placeholder="Enter username"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-zinc-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
               <input
@@ -92,7 +92,7 @@ export default function AdminLogin() {
                 value={credentials.password}
                 onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
                 required
-                className="w-full rounded-lg bg-zinc-800 px-4 py-3 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary border border-zinc-700"
+                className="w-full rounded-lg bg-gray-800 px-4 py-3 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#017aff] border border-gray-700"
                 placeholder="Enter password"
               />
             </div>
@@ -100,14 +100,14 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold py-3 px-6 rounded-lg transition-colors"
+              className="w-full bg-[#017aff] hover:bg-[#017aff]/80 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-colors"
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-gray-500">
               Default credentials: admin / password
             </p>
           </div>

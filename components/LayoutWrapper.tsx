@@ -1,14 +1,25 @@
-type Props = {
-    children: React.ReactNode;
-  };
+'use client'
+
+import { usePathname } from 'next/navigation'
+import Navbar from './Navbar'
+import Footer from './Footer'
+
+interface LayoutWrapperProps {
+  children: React.ReactNode
+}
+
+export default function LayoutWrapper({ children }: LayoutWrapperProps) {
+  const pathname = usePathname()
   
-  export default function LayoutWrapper({ children }: Props) {
-    return (
-      <div className="bg-black min-h-screen 
-      font-arimo overflow-hidden
-       px-6 md:px-20 py-10 text-gray-900">
-        {children}
-      </div>
-    );
-  }
+  // Check if current path is an admin route
+  const isAdminRoute = pathname?.startsWith('/admin')
+  
+  return (
+    <>
+      {!isAdminRoute && <Navbar />}
+      {children}
+      {!isAdminRoute && <Footer />}
+    </>
+  )
+}
   
