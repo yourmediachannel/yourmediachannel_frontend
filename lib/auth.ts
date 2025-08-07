@@ -18,15 +18,14 @@ const ADMIN_USERNAME = getEnv('ADMIN_USERNAME', 'YourAKShaw')
 const ADMIN_PASSWORD = getEnv('ADMIN_PASSWORD', 'YourAKShawPASS000')
 
 /**
- * Verifies admin credentials against environment variables.
+ * Verifies admin credentials against hardcoded values.
  * @param username - The username to verify.
  * @param password - The password to verify.
  * @returns Promise resolving to true if credentials are valid, false otherwise.
  */
 export async function verifyAdminCredentials(username: string, password: string): Promise<boolean> {
   try {
-    return (username === ADMIN_USERNAME || username === process.env.ADMIN_USERNAME) &&
-           (password === ADMIN_PASSWORD || password === process.env.ADMIN_PASSWORD)
+    return username === ADMIN_USERNAME && password === ADMIN_PASSWORD
   } catch (error) {
     console.error('Error verifying admin credentials:', error)
     return false
