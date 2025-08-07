@@ -21,7 +21,7 @@ const ContactSection = () => {
           Contact Us
         </h2>
         <p className="text-white text-lg">
-          Let's talk about how we can help you grow your Instagram presence.
+          Let&apos;s talk about how we can help you grow your Instagram presence.
         </p>
         <Image
           src="/svg-highlighter.svg"
@@ -37,7 +37,7 @@ const ContactSection = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-lg"
           >
-            <p className="text-green-400 font-medium">Message sent successfully! We'll get back to you soon.</p>
+            <p className="text-green-400 font-medium">Message sent successfully! We&apos;ll get back to you soon.</p>
           </motion.div>
         )}
 

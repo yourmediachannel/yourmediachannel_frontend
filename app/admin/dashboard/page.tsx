@@ -704,7 +704,7 @@ export default function AdminDashboard() {
                 >
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Today's Contacts</CardTitle>
+                      <CardTitle className="text-sm font-medium">Today&apos;s Contacts</CardTitle>
                       <TrendingUp className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -781,7 +781,7 @@ export default function AdminDashboard() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      Manage your contact form submissions and monitor your website's performance. 
+                      Manage your contact form submissions and monitor your website&apos;s performance. 
                       Use the navigation menu to switch between different sections.
                     </p>
                   </CardContent>
