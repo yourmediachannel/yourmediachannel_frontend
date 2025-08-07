@@ -105,12 +105,6 @@ export default function AdminLogin() {
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
-              Default credentials: admin / password
-            </p>
-          </div>
         </div>
       </motion.div>
     </div>
