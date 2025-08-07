@@ -1,13 +1,7 @@
 // hooks/useContactForm.ts
 
 import { useState } from 'react'
-
-export type ContactFormData = {
-  name: string
-  email: string
-  subject: string
-  message: string
-}
+import { ContactFormData } from '@/types/contact'
 
 export const useContactForm = () => {
   const [form, setForm] = useState<ContactFormData>({
@@ -19,6 +13,7 @@ export const useContactForm = () => {
 
   const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -28,18 +23,28 @@ export const useContactForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError(null)
 
     try {
-      // Fake API delay
-      await new Promise(res => setTimeout(res, 1500))
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      })
 
-      console.log('Submitted data:', form)
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit form')
+      }
+
       setSuccess(true)
-
-      // reset form
       setForm({ name: '', email: '', subject: '', message: '' })
     } catch (err) {
       console.error('Submission error:', err)
+      setError(err instanceof Error ? err.message : 'Failed to submit form')
     } finally {
       setIsLoading(false)
     }
@@ -51,5 +56,6 @@ export const useContactForm = () => {
     handleSubmit,
     isLoading,
     success,
+    error,
   }
 }

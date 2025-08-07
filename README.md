@@ -1,36 +1,235 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# YourMedia Channel - Frontend with Contact Form Backend
+
+A modern landing page with a fully functional contact form backend and password-protected admin dashboard.
+
+## Features
+
+- **Contact Form**: Fully functional contact form with validation and database storage
+- **Admin Dashboard**: Password-protected dashboard to view and manage contact submissions
+- **Modern UI**: Built with Next.js, TypeScript, Tailwind CSS, and Framer Motion
+- **Secure Authentication**: JWT-based authentication for admin access
+- **Data Persistence**: JSON file-based database for contact entries
+- **Responsive Design**: Mobile-first, accessible design
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS 4, Framer Motion
+- **Backend**: Next.js API Routes
+- **Authentication**: JWT, bcryptjs
+- **Validation**: Zod
+- **Database**: JSON file storage (simple, no external dependencies)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd yourmediachannel_frontend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables (optional):
+Create a `.env.local` file in the root directory:
+```env
+JWT_SECRET=your-super-secret-jwt-key-change-this
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD_HASH=$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Note**: The default password is "password". To generate a new password hash:
+```bash
+node -e "console.log(require('bcryptjs').hashSync('your-new-password', 10))"
+```
 
-## Learn More
+4. Run the development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Usage
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Contact Form
 
-## Deploy on Vercel
+- Visit the homepage and scroll to the contact section
+- Fill out the form with your name, email, subject, and message
+- Submit the form - data will be stored in the database
+- Success/error messages will be displayed
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Admin Dashboard
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Navigate to `/admin/login`
+2. Use the default credentials:
+   - **Username**: `admin`
+   - **Password**: `password`
+3. After successful login, you'll be redirected to `/admin/dashboard`
+4. View all contact form submissions
+5. Delete individual entries as needed
+6. Logout using the button in the header
+
+## API Endpoints
+
+### Contact Form
+- `POST /api/contact` - Submit contact form
+  - Body: `{ name, email, subject, message }`
+  - Returns: `{ success: boolean, message?: string, error?: string }`
+
+### Admin Authentication
+- `POST /api/admin/login` - Admin login
+  - Body: `{ username, password }`
+  - Returns: `{ success: boolean, token?: string, error?: string }`
+
+- `POST /api/admin/logout` - Admin logout
+  - Body: `{ token }`
+  - Returns: `{ success: boolean, message?: string, error?: string }`
+
+### Contact Management
+- `GET /api/admin/contacts` - Get all contact entries (requires auth)
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: `{ success: boolean, data?: ContactEntry[], error?: string }`
+
+- `DELETE /api/admin/contacts/[id]` - Delete contact entry (requires auth)
+  - Headers: `Authorization: Bearer <token>`
+  - Returns: `{ success: boolean, message?: string, error?: string }`
+
+## Data Structure
+
+### Contact Entry
+```typescript
+interface ContactEntry {
+  id: string
+  name: string
+  email: string
+  subject: string
+  message: string
+  createdAt: string
+  ipAddress?: string
+  userAgent?: string
+}
+```
+
+## Security Features
+
+- **Input Validation**: All form inputs are validated using Zod schemas
+- **Password Hashing**: Admin passwords are hashed using bcryptjs
+- **JWT Authentication**: Secure token-based authentication
+- **Session Management**: Automatic session cleanup and expiration
+- **CSRF Protection**: Built-in Next.js CSRF protection
+- **Rate Limiting**: Consider implementing rate limiting for production
+
+## File Structure
+
+```
+yourmediachannel_frontend/
+├── app/
+│   ├── admin/
+│   │   ├── dashboard/
+│   │   │   └── page.tsx          # Admin dashboard
+│   │   ├── login/
+│   │   │   └── page.tsx          # Admin login
+│   │   ├── layout.tsx            # Admin layout
+│   │   └── page.tsx              # Admin redirect
+│   ├── api/
+│   │   ├── contact/
+│   │   │   └── route.ts          # Contact form API
+│   │   └── admin/
+│   │       ├── login/
+│   │       │   └── route.ts      # Admin login API
+│   │       ├── logout/
+│   │       │   └── route.ts      # Admin logout API
+│   │       └── contacts/
+│   │           ├── route.ts      # Get contacts API
+│   │           └── [id]/
+│   │               └── route.ts  # Delete contact API
+│   └── ...                       # Other app files
+├── components/                    # React components
+├── hooks/                        # Custom React hooks
+├── lib/                          # Utility libraries
+│   ├── auth.ts                   # Authentication utilities
+│   ├── database.ts               # Database operations
+│   └── validation.ts             # Zod validation schemas
+├── types/                        # TypeScript type definitions
+├── data/                         # JSON database files (auto-created)
+└── middleware.ts                 # Route protection middleware
+```
+
+## Production Deployment
+
+### Environment Variables
+Set these environment variables in production:
+```env
+JWT_SECRET=your-super-secret-jwt-key
+ADMIN_USERNAME=your-admin-username
+ADMIN_PASSWORD_HASH=your-bcrypt-hash
+```
+
+### Database Considerations
+For production, consider:
+- Using a proper database (PostgreSQL, MongoDB, etc.)
+- Implementing data backup strategies
+- Adding rate limiting
+- Setting up monitoring and logging
+
+### Security Recommendations
+- Change default admin credentials
+- Use strong JWT secrets
+- Implement rate limiting
+- Add HTTPS in production
+- Regular security audits
+
+## Development
+
+### Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+### Adding Features
+- Contact form validation is in `lib/validation.ts`
+- Database operations are in `lib/database.ts`
+- Authentication logic is in `lib/auth.ts`
+- API routes are in `app/api/`
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Contact form not submitting**
+   - Check browser console for errors
+   - Verify API route is working
+   - Check data directory permissions
+
+2. **Admin login not working**
+   - Verify environment variables
+   - Check password hash format
+   - Clear browser localStorage
+
+3. **Dashboard not loading**
+   - Check authentication token
+   - Verify API endpoints
+   - Check network requests
+
+### Data Directory
+The application creates a `data/` directory in the project root to store:
+- `contacts.json` - Contact form submissions
+- `sessions.json` - Admin session tokens
+
+Make sure the application has write permissions to this directory.
+
+## License
+
+This project is licensed under the MIT License.

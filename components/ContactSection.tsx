@@ -7,7 +7,7 @@ import Button from '@/components/Button'
 import Image from 'next/image'
 
 const ContactSection = () => {
-  const { form, handleChange, handleSubmit, isLoading, success } = useContactForm()
+  const { form, handleChange, handleSubmit, isLoading, success, error } = useContactForm()
 
   return (
     <section id="contact" className="scroll-mt-14 bg-gradient-to-b from-neutral-900 to-neutral-900 via-black rounded-2xl py-16 px-4 md:px-8 lg:px-24 border border-white/10">
@@ -21,7 +21,7 @@ const ContactSection = () => {
           Contact Us
         </h2>
         <p className="text-white text-lg">
-          Let’s talk about how we can help you grow your Instagram presence.
+          Let's talk about how we can help you grow your Instagram presence.
         </p>
         <Image
           src="/svg-highlighter.svg"
@@ -30,6 +30,26 @@ const ContactSection = () => {
           width={400}
           height={400}
         />
+
+        {success && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-lg"
+          >
+            <p className="text-green-400 font-medium">Message sent successfully! We'll get back to you soon.</p>
+          </motion.div>
+        )}
+
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg"
+          >
+            <p className="text-red-400 font-medium">{error}</p>
+          </motion.div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6 text-left">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -74,7 +94,12 @@ const ContactSection = () => {
           ></textarea>
 
           <div className="flex justify-center">
-            <button className="bg-primary cursor-pointer hover:-translate-y-1 duration-300 text-lg font-bold text-black px-6 py-2 rounded-lg w-full">{isLoading ? 'Sending...' : success ? 'Sent!' : 'Send Message'}</button>
+            <button 
+              disabled={isLoading}
+              className="bg-primary cursor-pointer hover:-translate-y-1 duration-300 text-lg font-bold text-black px-6 py-2 rounded-lg w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {isLoading ? 'Sending...' : success ? 'Sent!' : 'Send Message'}
+            </button>
           </div>
         </form>
       </motion.div>
