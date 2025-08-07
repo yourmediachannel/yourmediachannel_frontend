@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ContactEntry } from '@/types/contact'
+import Image from 'next/image'
 import { 
   Trash2, 
   LogOut, 
@@ -191,7 +192,13 @@ export default function AdminDashboard() {
           <div className="p-6 border-b border-[#017aff]/20">
             <div className="flex items-center space-x-3 mb-4">
               <div className="bg-[#017aff] p-2 rounded-lg">
-                <Mail className="h-6 w-6 text-white" />
+                <Image 
+                  src="/images/logo.png" 
+                  alt="YourMedia Logo" 
+                  width={24} 
+                  height={24}
+                  className="w-6 h-6"
+                />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-white">YourMedia</h1>
