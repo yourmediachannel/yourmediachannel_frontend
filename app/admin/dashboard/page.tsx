@@ -18,7 +18,8 @@ import {
   Home,
   MessageSquare,
   Menu,
-  X
+  X,
+  Power
 } from 'lucide-react'
 
 export default function AdminDashboard() {
@@ -262,7 +263,7 @@ export default function AdminDashboard() {
               onClick={handleLogout}
               className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors"
             >
-              <LogOut className="h-5 w-5" />
+              <Power className="h-5 w-5" />
               <span>Logout</span>
             </button>
           </div>
