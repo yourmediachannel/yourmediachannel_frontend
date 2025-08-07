@@ -17,7 +17,7 @@ const ContactSection = () => {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="mx-auto text-center max-w-[900px]"
       >
-        <h2 className="text-3xl md:text-8xl uppercase italic font-bold text-primary mb-4">
+        <h2 className="text-3xl md:text-8xl uppercase italic font-bold text-brand mb-4">
           Contact Us
         </h2>
         <p className="text-white text-lg">
@@ -94,9 +94,9 @@ const ContactSection = () => {
           ></textarea>
 
           <div className="flex justify-center">
-            <button 
+            <button
               disabled={isLoading}
-              className="bg-primary cursor-pointer hover:-translate-y-1 duration-300 text-lg font-bold text-black px-6 py-2 rounded-lg w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="bg-brand cursor-pointer hover:-translate-y-1 duration-300 text-lg font-bold text-black px-6 py-2 rounded-lg w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? 'Sending...' : success ? 'Sent!' : 'Send Message'}
             </button>

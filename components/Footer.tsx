@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="flex gap-4">
           {/* <Link href="/imprint" className="hover:underline">Imprint</Link>
           <Link href="/privacy" className="hover:underline">Privacy</Link> */}
-          <Link href="#hero" className="tracking-wider flex items-center  hover:text-primary shadow-xl rounded-lg border  pl-2 pr-3 py-2"><MoveUp size={15} /> To Top</Link>
+          <Link href="#hero" className="tracking-wider flex items-center  hover:text-brand shadow-xl rounded-lg border  pl-2 pr-3 py-2"><MoveUp size={15} /> To Top</Link>
         </div>
       </div>
     </footer>

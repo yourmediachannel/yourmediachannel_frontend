@@ -17,19 +17,19 @@ const sizeClasses = {
   lg: 'px-6 py-3 text-lg rounded-lg',
 };
 
-const Button: React.FC<ButtonProps> = ({ 
-  label, 
-  onClick, 
-  href, 
-  size = 'lg', 
+const Button: React.FC<ButtonProps> = ({
+  label,
+  onClick,
+  href,
+  size = 'lg',
   props,
   'data-cal-namespace': calNamespace,
   'data-cal-link': calLink,
   'data-cal-config': calConfig,
-  ...restProps 
+  ...restProps
 }) => {
   const baseClasses =
-    'bg-primary cursor-pointer hover:-translate-y-1 duration-300 text-black font-semibold tracking-wider shadow-[4px_4px_0px_#0F3B24] hover:opacity-90 transition';
+    'bg-brand cursor-pointer hover:-translate-y-1 duration-300 text-black font-semibold tracking-wider shadow-[4px_4px_0px_#0F3B24] hover:opacity-90 transition';
   const sizeClass = sizeClasses[size];
 
   // Prepare Cal.com attributes
@@ -41,12 +41,12 @@ const Button: React.FC<ButtonProps> = ({
 
   if (href) {
     return (
-      <a 
-        href={href} 
-        {...props} 
+      <a
+        href={href}
+        {...props}
         {...calAttributes}
         {...restProps}
-        onClick={onClick} 
+        onClick={onClick}
         className={`${baseClasses} ${sizeClass}`}
       >
         {label}
@@ -55,9 +55,9 @@ const Button: React.FC<ButtonProps> = ({
   }
 
   return (
-    <button 
-      onClick={onClick} 
-      {...props} 
+    <button
+      onClick={onClick}
+      {...props}
       {...calAttributes}
       {...restProps}
       className={`${baseClasses} ${sizeClass}`}

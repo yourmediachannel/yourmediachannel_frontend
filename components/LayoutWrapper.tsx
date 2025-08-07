@@ -15,11 +15,11 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   const isAdminRoute = pathname?.startsWith('/admin')
   
   return (
-    <>
+    <main className='bg-black overflow-hidden'>
       {!isAdminRoute && <Navbar />}
       {children}
-      {!isAdminRoute && <Footer />}
-    </>
+      { !isAdminRoute&& <Footer />}
+    </main>
   )
 }
   

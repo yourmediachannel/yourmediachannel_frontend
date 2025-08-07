@@ -40,7 +40,7 @@ const MobileMenu = () => {
         {
           navItems.map((item, index) => (<div key={index}>
             {
-              index !== navItems.length-1 ? <a href={item.href} onClick={() => setIsOpen(false)} className="text-lg hover:text-primary">{item.label}</a> :
+              index !== navItems.length - 1 ? <a href={item.href} onClick={() => setIsOpen(false)} className="text-lg hovetext-brand">{item.label}</a> :
                 <Button
                   href={item.href}
                   label={item.label}

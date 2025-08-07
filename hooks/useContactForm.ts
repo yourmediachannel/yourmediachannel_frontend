@@ -33,10 +33,12 @@ export const useContactForm = () => {
         },
         body: JSON.stringify(form),
       })
+      console.log(response)
 
       const data = await response.json()
 
       if (!response.ok) {
+        console.error('Submission error:', data)
         throw new Error(data.error || 'Failed to submit form')
       }
 

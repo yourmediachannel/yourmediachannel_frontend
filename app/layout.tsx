@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Arimo } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import LayoutWrapper from "@/components/LayoutWrapper";
+import { Toaster } from "sonner";
 
 const arimo = Arimo({
   variable: "--font-arimo",
@@ -51,9 +49,8 @@ export default function RootLayout({
       <body
         className={`${arimo.variable} antialiased font-arimo` }
       >
-        <LayoutWrapper>
+          <Toaster/>
           {children}
-        </LayoutWrapper>
       </body>
     </html>
   );
