@@ -4,6 +4,7 @@ import ContactSection from "@/components/ContactSection";
 import SocialMediaAdsSection from "@/components/SocialMediaAdsSection";
 import ProcessSection from "@/components/ProcessSection";
 import FaqSection from "@/components/FaqSection";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <ProcessSection/>
       <FaqSection/>
       <ContactSection />
+      <ScrollToTopButton/>
     </LayoutWrapper>
   );
 }
