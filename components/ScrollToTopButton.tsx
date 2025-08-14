@@ -10,7 +10,7 @@ const ScrollToTopButton = () => {
   const pathLength = useTransform(scrollYProgress, [0.02, 1], [0, 1])
   return (
     <motion.a href='#hero'
-      initial={{ opacity: 1 }}
+      initial={{ opacity: 0 }}
       style={{ opacity }}
       transition={{ ease: easeInOut, duration: 0.4 }}
       className='fixed bottom-10 right-10 z-10 bg-white/40 backdrop-blur-md rounded-full'>
