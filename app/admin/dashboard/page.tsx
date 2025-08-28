@@ -140,7 +140,7 @@ export default function AdminDashboard() {
         <div className="flex items-center space-x-2">
           <Switch
             checked={info.getValue()}
-            onCheckedChange={(checked) => handleToggleAttended(info.row.original.id, checked)}
+            onCheckedChange={(checked:any) => handleToggleAttended(info.row.original.id, checked)}
             className="data-[state=checked]:bg-primary"
           />
           <span className="text-xs text-muted-foreground hidden sm:inline">
@@ -1096,7 +1096,7 @@ export default function AdminDashboard() {
                     <Switch
                       id="attended-toggle"
                       checked={selectedContact.isAttended}
-                      onCheckedChange={(checked) => handleToggleAttended(selectedContact.id, checked)}
+                      onCheckedChange={(checked:any) => handleToggleAttended(selectedContact.id, checked)}
                       className="data-[state=checked]:bg-primary"
                     />
                     <Badge variant={selectedContact.isAttended ? "default" : "secondary"}>
