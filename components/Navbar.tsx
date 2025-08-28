@@ -4,18 +4,8 @@ import MobileMenu from "./MobileMenu";
 import Button from "./Button";
 import navItems from "@/constants/navItems";
 import Link from "next/link";
-import { useEffect } from "react";
-import { getCalApi } from "@calcom/embed-react"
 
 const Navbar = () => {
-
-  useEffect(() => {
-  (async function () {
-    const cal = await getCalApi({ "namespace": "30min" });
-    cal("ui", { "hideEventTypeDetails": false, "layout": "month_view"});
-  })();
-}, [])
-
   return (
     <>
       <nav className="fixed top-0 z-[1000] left-0 w-full  text-white px-6 md:px-20 py-4 flex items-center justify-between shadow-md bg-black/30 backdrop-blur-md">
@@ -42,11 +32,8 @@ const Navbar = () => {
 
         {/* CTA Button */}
         <Button
-          data-cal-namespace="30min"
-          data-cal-link="yourakshaw/30min"
-          data-cal-config='{"layout": "month_view"}' 
           size="sm"
-          href="#book"
+          href="http://topmate.io/YourAKShaw"
           label="Book a Call"
         />
 

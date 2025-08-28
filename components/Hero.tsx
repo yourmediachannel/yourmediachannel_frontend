@@ -36,9 +36,7 @@ const HeroSection = () => {
       {/* 📞 CTA Button */}
       <Button 
         label="Schedule a Free Call" 
-        data-cal-namespace="30min"
-        data-cal-link="yourakshaw/30min"
-        data-cal-config='{"layout": "month_view"}'
+        href="http://topmate.io/YourAKShaw"
       />
     </section>
   );
