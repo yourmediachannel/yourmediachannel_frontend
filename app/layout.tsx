@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Arimo } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import Analytics from "@/components/Analytics";
 
 const arimo = Arimo({
   variable: "--font-arimo",
@@ -46,6 +47,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Analytics/>
+      </head>
       <body
         className={`${arimo.variable} antialiased font-arimo` }
       >
